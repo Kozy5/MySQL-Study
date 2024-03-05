@@ -8,7 +8,7 @@ where // 조건(필터)을(를) 줄  수 있는 절
 
 My SQL where 절
 
-기본적인 조건문
+★ 기본적인 조건문
 
 select *            // 모든 데이터 조회
 from food_orders    // food_orders 이라는 테이블에서
@@ -17,7 +17,7 @@ where cuisine_type ="Korean" // 한식만 뽑아줘
 # 영어 대소문자 구분해야함 korean (x) Korean(O)
 # 자료형 구분 ex) 문자형 '~' 숫자형 1 
 
-필터 표현
+★ 필터 표현
 
 1. <> //같지 않음
 where gender<>'male' // gender에 male이 아닌값만 뽑아줘
@@ -37,8 +37,18 @@ where name like '김%' // 이름(name)중에 김씨로 시작되는 값을 찾�
 where name like '%태%'// 이름(name)중에 중간에 태 가 들어가는 값을 찾아줘
 where name like '%형' // 이름(name)중에 형으로 끝나는 값을 찾아줘
 
+★ 필터조건 여러개를 적용해 할 때 논리 연산자
 
+1. AND // 그리고 
+age >= 20              // 나이가 20세 이상
+and gender = 'female' // "이고"(그리고), 여성
 
+2. OR // 또는 
+age >= 20             // 나이가 20세 이상
+or gender = 'female'  // 이거나("또는") ,여성
+
+3. NOT // 아닌 
+not gender = 'female' // 여성이 아닌
 
 
 
