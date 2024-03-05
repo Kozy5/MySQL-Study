@@ -6,7 +6,7 @@ where // 조건(필터)을(를) 줄  수 있는 절
 
 
 
-My SQL 필터 표현
+My SQL where 절
 
 기본적인 조건문
 
@@ -16,6 +16,34 @@ where cuisine_type ="Korean" // 한식만 뽑아줘
 
 # 영어 대소문자 구분해야함 korean (x) Korean(O)
 # 자료형 구분 ex) 문자형 '~' 숫자형 1 
+
+필터 표현
+
+1. <> //같지 않음
+where gender<>'male' // gender에 male이 아닌값만 뽑아줘
+출력 : gender = female female female . . .
+
+2.between A and B  // A부터 B까지 값
+where age between 21 and 23 // age에 21부터23까지의 값만 뽑아줘
+출력 : age = 21,22,23
+
+3. in(A,B,C) '포함'하는 조건 주기 (콕 찝어서 선택적인 조건)
+where age in(15,21,25) // age에 15, 21, 25 인 값만 뽑아줘
+출력 : age = 15,21,25
+자료형 구분해서 문자형,숫자형 모두 가능
+
+4. like '시작문자%' ,'%포함문자%' ,'%종료문자' // 포함되는 값으로 조건 주기
+where name like '김%' // 이름(name)중에 김씨로 시작되는 값을 찾아줘
+where name like '%태%'// 이름(name)중에 중간에 태 가 들어가는 값을 찾아줘
+where name like '%형' // 이름(name)중에 형으로 끝나는 값을 찾아줘
+
+
+
+
+
+
+
+
 
 
 
