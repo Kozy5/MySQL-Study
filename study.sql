@@ -76,5 +76,44 @@ MIN:컬럼 전체 속 최솟값,
 MAX:컬럼 전체 속 최대값
 
 
+SQL TIP
+[예시] "주문 금액(1-2)"이 "30,000원 이상(1-3)"인 주문건의 "갯수 구하기1-4"
+1. Query를 적기 전에 흐름을 생각해보기
+1-1 어떤 "테이블"에서 데이터를 뽑을것인가
+1-2 어떤 컬럼을 사용할 것인가
+1-3 어떤 조건을 지정해야 하는가
+1-4 어떤 함수(수식)을 이용해야 하는가
+
+[실습 1] 음식점별 주문금액의 최댓값 조회하기
+1-1 food_orders
+1-2 restaurant_name,price
+1-3 group by
+1-4 max() 
+
+그룹별(종류별) 값 구하기
+group by // select,from,where 과 같은 위치에 쓰임
 
 
+select restaurant_name,
+       max(price) max_price
+from food_orders
+group by restaurant_name
+결과 : restaurant_name : 가게이름별로 출력(중복시 미출력 종류별이니까),
+price : 주문금액 최댓값만 출력 // 가게 이름별 주문금액 최댓값만 출력 
+
+[실습 2] 결제타입별 최근결제일 조회하기
+2-1 payments
+2-2 pay_type, date
+2-3 group by 
+2-4 max()
+
+select pay_type,
+       max(date) near_date
+from payments
+group by pay_type
+결과 : pay_type cash,card 2개만 출력(결제종류가 2가지뿐 종류별이니까),
+ date : 가장 최근(높은 숫자)일 출력 // ex) cash 2023/03/02 card 2021/02/04
+ 
+ 해당 컬럼을 기준으로 정렬하기
+ order by(컬럼명) // 해당컬럼을 기준으로 오름차순으로 정렬해줘
+ order by(컬럼명) desc // 해당컬럼을 기준으로 내림차순으로 정렬해줘
