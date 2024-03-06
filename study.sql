@@ -22,8 +22,8 @@ where cuisine_type ="Korean" // 한식만 뽑아줘
 where gender<>'male' // gender에 male이 아닌값만 뽑아줘
 출력 : gender = female female female . . .
 
-2.between A and B  // A부터 B까지 값
-where age between 21 and 23 // age에 21부터23까지의 값만 뽑아줘
+2.between A and B  // A이상 B이하 값
+where age between 21 and 23 // age에 21이상23이하의 값만 뽑아줘
 출력 : age = 21,22,23
 
 3. in(A,B,C) '포함'하는 조건 주기 (콕 찝어서 선택적인 조건)
@@ -75,6 +75,11 @@ from 테이블명
 MIN:컬럼 전체 속 최솟값, 
 MAX:컬럼 전체 속 최대값
 
+*실습 information*
+table name 
+1. food_orders
+2. payments
+3. customers
 
 SQL TIP
 [예시] "주문 금액(1-2)"이 "30,000원 이상(1-3)"인 주문건의 "갯수 구하기1-4"
@@ -114,6 +119,51 @@ group by pay_type
 결과 : pay_type cash,card 2개만 출력(결제종류가 2가지뿐 종류별이니까),
  date : 가장 최근(높은 숫자)일 출력 // ex) cash 2023/03/02 card 2021/02/04
  
+
  해당 컬럼을 기준으로 정렬하기
  order by(컬럼명) // 해당컬럼을 기준으로 오름차순으로 정렬해줘
  order by(컬럼명) desc // 해당컬럼을 기준으로 내림차순으로 정렬해줘
+ order by A,B // A값을 기준으로 먼저 정렬해주고 A속에서 B를 정렬
+ ex) order by gender,name 결과 : 여자 강%~하% 이후 남자 강%~하%
+
+ 실습[1] 음식점별 주문 금액 최댓값 조회하기 - 최댓값 기준으로 내림차순 정렬
+ 1-1 food_orders
+ 1-2 restaurant_name, price
+ 1-3 group by order by
+ 1-4 max()
+
+ select restaurant_name,
+        max(price) max_price
+from food_orders
+group by restaurant_name
+order by max(price) desc // max(price) 함수 적용된 컬럼으로 작성해야함
+
+
+ 실습[2] 고객을 이름 순으로 오름차순으로 정렬하기
+ 1-1 customers
+ 1-2 name
+ 1-3 order by
+ 1-4 x
+
+ select * //컬럼 기준,group by도 없으면 전체 기준으로 함..
+ from customers
+ order by name
+
+ select *
+from customers
+
+2-6 SQL 구조맞추기 연습
+
+select cuisine_type,
+       sum(delivery_time) total_delivery_time
+from food_orders
+where day_of_week='weekend'
+group by cuisine_type
+order by sum(delivery_time) desc
+
+select age,
+	   count(name) count_of_name
+from customers
+where age between 20 and 40
+group by age
+order by age
