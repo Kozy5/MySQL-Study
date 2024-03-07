@@ -299,3 +299,48 @@ from food_orders fo
 수수료를 계산할 때 흔히들 현금 사용, 카드사용을 나누곤 하는데
 현금일 때의 수수료율과 카드일 때의 수수료율 다르게 
 if 혹은 case문으로 각각 다른 수수료율 혹은 수수료 계산 방식 적용
+
+3-5 [실습 1] (시청 전 먼저 구현해본것)
+1. 10세 이상, 30세 미만 고객의 나이와 성별로 그룹 나누기 (이름도 같이 출력)
+select name,
+	   case when age like '1%' then '10대'
+	   		when age like '2%' then '20대' end '나이 그룹',
+	   case when gender ='male' then '남자'
+	   		else '여자' end '성별 그룹'
+from customers
+where age between 10 and 29
+order by age,gender
+스파르타 답안
+select case when age between 10 and 19 and gender = 'male' then '10대 남성'
+			when age between 10 and 19 and gender = 'female' then '10대 여성'
+			when age between 20 and 29 and gender = 'male' then '20대 남성'
+			when age between 20 and 29 and gender = 'female' then '20대 여성' end '고객 분류',
+			name,
+			age,
+			gender
+from customers
+where age between 10 and 29
+출력 : name,10대 남성
+
+3-5 [실습 2 ] (시청 전 먼저 구현해본 것)
+select case when price between 5000 and 14999 and cuisine_type = 'Korean' then '저렴한식'
+			when price  between 15000 and 20000 and cuisine_type = 'Korean' then '기본한식'
+			when price between 20001 and 30000 and cuisine_type = 'Korean' then '고급한식'
+			when price between 5000 and 14999 and cuisine_type in('Chinese','Japanese','Thai','Vietnamese','Indian') then '저렴 아시아식'
+			when price  between 15000 and 20000 and cuisine_type in('Chinese','Japanese','Thai','Vietnamese','Indian')  then '기본 아시아식'
+			when price between 20001 and 30000 and cuisine_type in('Chinese','Japanese','Thai','Vietnamese','Indian')  then '고급 아시아식'
+			else '기타' end '음식점 분류',
+			restaurant_name
+from food_orders
+where price between 5000 and 30000
+스파르타 답안
+select case when price/quantity  < 5000 and cuisine_type = 'Korean' then '저렴한식'
+			when price/quantity  between 5000 and 15000 and cuisine_type = 'Korean' then '기본한식'
+			when price/quantity >15000 and cuisine_type = 'Korean' then '고급한식'
+			when price/quantity < 5000 and cuisine_type in('Chinese','Japanese','Thai','Vietnamese','Indian') then '저렴 아시아식'
+			when price/quantity  between 5000 and 15000 and cuisine_type in('Chinese','Japanese','Thai','Vietnamese','Indian')  then '기본 아시아식'
+			when price/quantity >15000 and cuisine_type in('Chinese','Japanese','Thai','Vietnamese','Indian')  then '고급 아시아식'
+			else '기타' end '음식점 분류',
+			restaurant_name
+from food_orders
+where price between 0 and 30000
