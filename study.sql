@@ -193,3 +193,44 @@ where addr like '%서울특별시%'
 
 결과 = 원래주소명 : 서울특별시 ~구 ~동
        시 : 서울
+
+[실습 1 ] 출력값을 잘못 이해한 예시 (시청 전 먼저 구현해본 것)
+select concat('`',substr(addr,1,2),'`',
+',','`',cuisine_type,'`',',','`',avg(price),'`')	   
+from food_orders fo 
+where addr like '%서울특별시%'
+group by cuisine_type 
+출력 : '서울','Korean','금액'
+
+[본 실습 1]
+서울 지역의 음식 타입별 평균 음식 주문금 구하기(출력 : '서울','타입','평균금액')
+select substr(addr,1,2) '지역',
+       cuisine_type '음식타입',
+       avg(price) '평균금액'
+from food_orders
+where addr like '%서울%'
+group by 1,2
+
+[본 실습 2] 도메인의 뜻을 오해해서 substr을 고려하지 못한 예시(시청 전 먼저 구현해본 것)
+이메일 도메인별 고객수와 평균 연령 구하기
+select email '이메일',
+	count(email)'고객수',
+       avg(age) '평균연령'
+from customers
+group by email
+
+[본 실습 2]
+이메일 도메인별 고객수와 평균 연령 구하기
+select substr(email,10) '도메인',
+       count(1) '고객수',
+       avg(age)'평균연령'
+from customers
+group by 1 
+출력 : '도메인','고객수','평균연령'
+
+[본 실습 3] (시청 전 먼저 구현해본 것)
+'[지역(시도)] 음식점이름(음식종류)' 컬럼을 만들고, 총 주문건수 구하기
+SELECT concat('[',substr(addr,1,2),']',restaurant_name,'(',cuisine_type,')') '[지역]음식점이름(음식종류)',
+	   sum(quantity) '총 주문건수'
+from food_orders fo 
+group by 1
