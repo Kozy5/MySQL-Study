@@ -234,3 +234,68 @@ SELECT concat('[',substr(addr,1,2),']',restaurant_name,'(',cuisine_type,')') '[�
 	   sum(quantity) '총 주문건수'
 from food_orders fo 
 group by 1
+
+if문
+if(조건,조건충족할때,조건 충족하지 않을 때)
+
+[if문 예제 1]
+select restaurant_name,
+       cuisine_type "원래 음식 타입",
+       if(cuisine_type='Korean', '한식', '기타') "음식 타입"
+from food_orders
+[if문 예제2]
+select addr "원래 주소",
+       if(addr like '%평택군%', replace(addr, '문곡리', '문가리'), addr) "바뀐 주소"
+from food_orders
+where addr like '%문곡리%'
+
+case when 문
+1. 시작 시 case when 으로 시작
+2. 이후에는 when으로 조건 추가 이후 반환값을 받을땐 then 사용
+3. 이 외는 else 사용 
+4. 마무리는 end
+5. 컬럼명 작성 시 , 로 마무리
+
+[실습 1]
+음식타입이 Korean일 경우 한식 japanese,chinese 일 경우 아시아로 출력 그 외에는 기타로 출력
+select case when cuisine_type = 'Korean' then '한식'
+			when cuisine_type in('japanese','chinese') then '아시아'
+			else '기타' end '음식타입',
+		cuisine_type 
+from food_orders
+
+[실습 2]
+음식 단가를 주문 수량이 1일 때는 음식 가격, 주문 수량이 2개 이상일 때는 음식가격/주문수량 으로 지정
+(이 예제는 if문과 case when문 두가지 모두 가능하니 연습 해보자)
+if 문 version
+select order_id,
+       price,
+       quantity,
+       if(quantity= 1,price,price/quantity) '음식 단가'
+from food_orders
+
+case when version
+select order_id,
+       price,
+       quantity,
+       case when quantity = 1 then price
+            when quantity >=2 then price/quantity end '음식 단가'
+from food_orders
+
+[활용 실습]
+음식 타입과 같이 새로운 카테고리를 만들 수 있습니다.
+select cuisine_type,
+	   case when cuisine_type = 'Korean' then '한국 음식'
+	   	 	when cuisine_type in('japanese','chinese','thai','indian') then '아시아 음식'
+	   	 	when cuisine_type = 'American' then  '미국 음식'
+	   	 	when cuisine_type = 'italin' then '유럽 음식'
+	   	 	else '기타' end '음식 카테고리'
+from food_orders fo 
+활용 실습 2 
+고객 분류 
+10대 여성, 10대 남성, 20대 여성, 20대 남성 등 카테고리
+
+연산식을 적용할 조건 지정
+수수료를 계산할 때 흔히들 현금 사용, 카드사용을 나누곤 하는데
+현금일 때의 수수료율과 카드일 때의 수수료율 다르게 
+if 혹은 case문으로 각각 다른 수수료율 혹은 수수료 계산 방식 적용
