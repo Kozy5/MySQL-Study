@@ -167,3 +167,29 @@ from customers
 where age between 20 and 40
 group by age
 order by age
+
+3주차
+
+기존 데이터 변환
+replace(col,A,B) // 특정 컬럼에 A를 B로 바꿔줘
+
+replace(name,'철수','짱구') // name 컬럼에 '철수'라는 단어를,'짱구'로 바꿔줘
+
+[실습] food_orders 테이블에 주소 컬럼에 '문곡리'를 '문가리'로 바꿔줘
+select addr '원래 주소명',
+       replace(addr,'문곡리','문가리') '바뀐 주소명'
+from food_orders
+where addr like '%문곡리%'
+
+특정 문자만 조회
+substring(col,A,B) // 특정 컬럼에 A번째 글자부터(기준으로) B글자 만큼만 추출해줘
+substring(addr,1,2)// addr 컬럼에 1번째 글자부터 2글자 만큼만 추출해줘
+
+[실습] food_orders 테이블에 주소 컬럼에 '서울특별시'중에서 시 명만 추출해줘
+select addr '원래주소명',
+       substr(addr,1,2) '시' //첫번째 글자부터(기준으로) 2글자
+from food_orders
+where addr like '%서울특별시%'
+
+결과 = 원래주소명 : 서울특별시 ~구 ~동
+       시 : 서울
