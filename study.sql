@@ -394,3 +394,10 @@ select case when day_of_the_week = 'weekday' then 3000 * if(quantity>3,1.2,1)
 			day_of_the_week,
 			quantity
 from food_orders
+Subquery 예시
+select order_id, restaurant_name, if(over_time>=0, over_time, 0) over_time
+from 
+(
+select order_id, restaurant_name, food_preparation_time-25 over_time
+from food_orders
+) a
