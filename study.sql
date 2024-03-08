@@ -344,3 +344,53 @@ select case when price/quantity  < 5000 and cuisine_type = 'Korean' then '저렴
 			restaurant_name
 from food_orders
 where price between 0 and 30000
+
+실습[1] 조건문으로 서로 다른 식을 적용한 수수료 구해보기
+지역과 배달시간을 기반으로 배달 수수료 구하기(식당 이름, 주문 번호 함께 출력)
+(지역:서울,기타 - 서울일 때는 시간 계산 * 1.1 기타일 때는 곱하는 값 없음
+시간 : 25분, 30분 - 25분 초과하면 음식 가격의 5%, 30분 초과하면 음식 가격의 10%)
+(시청 전 구현해본것)
+select case when addr like '%서울%' then '서울'
+			else '기타' end '지역',
+		if (addr like '%서울%',delivery_time * 1.1,delivery_time) '배달시간',
+		case when if (addr like '%서울%',delivery_time * 1.1,delivery_time) between 26 and 29 then price *1.05
+			 when if (addr like '%서울%',delivery_time * 1.1,delivery_time) > 30 then price *1.1 
+			 else price end '음식 가격',
+			 restaurant_name,
+			 order_id,
+			 price,
+			 delivery_time
+from food_orders
+(스파르타 답안) 틀렸다고 생각함. 서울일 경우 delivery_time을 늘려서 계산해야하는데 pirce를 1.1곱하심
+select		order_id,
+			restaurant_name,
+			substr(addr,1,2),
+			delivery_time,
+			price,
+			case when delivery_time >30 then price * 0.1 *if(addr like '%서울%',1.1,1)
+			when delivery_time >25 then price * 0.05 *if(addr like '%서울%',1.1,1)
+			else 0 end '수수료'
+from food_orders
+(직접 수정해본)
+select		order_id,
+			restaurant_name,
+			substr(addr,1,2),
+			delivery_time,
+			price,
+			case when delivery_time*if(addr like '%서울%',1.1,1) >30 then price * 0.1 
+			when delivery_time*if(addr like '%서울%',1.1,1) >25 then price * 0.05 
+			else 0 end '수수료'
+from food_orders
+
+실습[2] 
+주문 시기와 음식 수를 기반으로 배달 할증료 구하기
+(주문 시기 : 평일 기본료 = 3000/ 주말 기본료 = 3500, 
+음식 수 : 3개 이하이면 할증 없음/3개 초과이면 기본료 * 1.2)
+(시청 전 구현해본것)
+select case when day_of_the_week = 'weekday' then 3000 * if(quantity>3,1.2,1)
+			when day_of_the_week = 'weekend' then 3500 * if(quantity>3,1.2,1)
+			end '요금표',
+			restaurant_name,
+			day_of_the_week,
+			quantity
+from food_orders
