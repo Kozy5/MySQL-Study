@@ -530,3 +530,26 @@ from food_orders
 group by 1
 ) a
 
+[실습 2] 음식점의 총 주문수량과 주문 금액을 연산하고, 주문 수량을 기반으로 수수료 할인율 구하기
+(할인조건
+수량이 5개 이하 -> 10%
+수량이 15개 초과, 총 주문금액이 300000이상 -> 0.5%
+이 외에는 일괄 1%)
+(시청 전 구현해본것)
+SELECT restaurant_name,
+	   total_quantity,
+	   total_price,
+	   case when total_quantity <= 5 then 0.1 
+	   		when total_quantity > 15 and total_price >= 300000 then 0.005
+	   		else 0.01 end '수수료 할인율'
+FROM 
+(
+SELECT restaurant_name,
+	   sum(quantity) total_quantity,
+	   sum(price) total_price
+from food_orders
+group by 1
+) a
+(영상 속 답안)
+= 동일 !!
+
