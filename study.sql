@@ -600,3 +600,33 @@ select distinct c.name,
 	   f.restaurant_name
 from customers c left join food_orders f on c.customer_id = f.customer_id
 order by c.name
+
+4-7 join 연산
+[실습1] 주문 가격과 수수료율을 곱하여 주문별 수수료 구하기
+(조회 컬럼 : 주문 번호, 식당 이름, 주문 가격, 수수료율, 수수료)
+* 수수료율이 있는 경우만 조회
+(시청 전 구현해본 것)
+select f.order_id,
+	   f.restaurant_name,
+	   f.price,
+	   p.vat,
+	   f.price * vat '주문별 수수료'
+from food_orders f inner join payments p on f.order_id = p.order_id 
+
+[실습 2] 50세 이상 고객의 연령에 따라 경로 할인율을 적용하고, 
+음식 타입별로 원래 가격과 할인 적용 가격 합을 구하기
+(조회 컬럼 : 음식 타입, 원래 가격, 할인 적용 가격, 할인 가격)
+* 할인 : 나이 -50*0.005
+* 고객 정보가 없는 경우도 포함하여 조회, 할인 금액이 큰 순서대로 정렬
+(시청 전 구현해본 것)
+SELECT f_cui_type,
+	   f_price,
+	   case when  c_age >= 50 then f_price - (c_age - 50 * 0.005) end '할인 적용가격',
+	   case when  c_age >= 50 then (c_age - 50 * 0.005) end '할인 가격'
+FROM 
+(
+SELECT f.cuisine_type f_cui_type,
+	   f.price f_price,
+	   c.age c_age
+from food_orders f left join customers c on f.customer_id = c.customer_id 
+) a
