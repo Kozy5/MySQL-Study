@@ -401,3 +401,132 @@ from
 select order_id, restaurant_name, food_preparation_time-25 over_time
 from food_orders
 ) a
+
+4-3 Subquery 연습1
+[실습 1]
+음식점의 평균 단가별 segmentatino을 진행하고, 그룹에 따라 수수료 연산하기
+(수수료 구간 - 
+~5000원 미만 0.05%
+~20000원 미만 1%
+~30000원 미만 2%
+30000원 초과 3%)
+(시청 전 구현해본것)
+select  restaurant_name,
+		unit_price+unit_price*vat vat_price
+from
+(
+SELECT restaurant_name,
+	   unit_price,
+  	   case when unit_price < 5000 then  0.005
+	   		when unit_price < 20000 then   0.01
+	   		when unit_price < 30000 then   0.02
+	   		when unit_price > 30000 then   0.03 end vat
+from 
+(
+select restaurant_name,
+avg(price/quantity) unit_price
+from food_orders fo
+group by price/quantity
+) a
+) b
+(영상 속 답안)
+select restaurant_name,
+       price_per_plate*ratio_of_add "수수료"
+from 
+(
+select restaurant_name,
+       case when price_per_plate<5000 then 0.005
+            when price_per_plate between 5000 and 19999 then 0.01
+            when price_per_plate between 20000 and 29999 then 0.02
+            else 0.03 end ratio_of_add,
+       price_per_plate
+from 
+(
+select restaurant_name, avg(price/quantity) price_per_plate
+from food_orders
+group by 1
+) a
+) b
+
+[실습 2]
+음식점의 지역과 평균  배달시간으로 segmentation하기
+(지역 앞 두글자 사용,
+평균 배달시간은 20분 30분 30분 초과)
+(시청 전 구현해본 것)
+select sido,
+	   case when avg_delivery_time <= 20 then '빠르군'
+			when avg_delivery_time < 30 then '준수하군'
+			when avg_delivery_time >= 30 then '느리군' end '지역 배달 수준'
+from
+(
+select substr(addr,1,2) sido,
+	   avg(delivery_time) avg_delivery_time
+from food_orders
+group by 1
+) a
+
+
+
+
+(영상 속 답안) 틀렸다고 생각함 = avg가 필요가 없음 애초에 지역의 평균 배달로 가는게 맞는걸로 판단됨
+SELECT restaurant_name,
+addr_first,
+	   case when avg_delivery_time <= 20 then '빠르군'
+			when avg_delivery_time < 30 then '준수하군'
+			when avg_delivery_time >= 30 then '느리군' end '지역 배달 수준'
+FROM 
+(
+select restaurant_name,
+	   substr(addr,1,2) addr_first,
+	   avg(delivery_time) avg_delivery_time
+from food_orders fo
+group by 1,2
+) a
+
+
+4-4 subquery 연습 2
+[실습 1] 음식 타입별 지역별 총 주문수량과 음식점 수를 연산하고,
+주문수량과 음식점수 별 수수료율을 산정하기
+(음식점 수 5개 이상, 주문수 30개 이상 -> 수수료 0.05%
+음식점 수 5개 이상, 주문수 30개 미만 -> 수수료 0.08%
+음식점수 5개 미만, 주문수 30개 이상 -> 수수료 1%
+음식점수 5개 이상, 주문수 30개 미만 -> 수수료 2%)
+(시청 전 구현해본 것)
+SELECT cuisine_type,
+	   sido,
+	   sum_quantity,
+	   count_store,
+	   case when count_store >= 5 and sum_quantity >= 30 then 0.005
+			when count_store >= 5 and sum_quantity < 30 then 0.008
+			when count_store < 5 and sum_quantity >= 30 then 0.01	
+			when count_store < 5 and sum_quantity < 30 then 0.02
+			end '수수료'
+FROM 
+(
+SELECT  cuisine_type,
+		SUBSTR(addr,1,2) sido,
+		sum(quantity) sum_quantity,
+		count(restaurant_name) count_store
+FROM food_orders fo 
+group by 1,2
+) a
+
+(영상 속 답안) 이건 마치.. 음식 타입별 총 주문 수량과 음식점! 이름 수!를 연산하고
+주문수량과 음식점 !이름 수! 별 수수료율을 산정하기 이런걸 하신것과 같지 않나 생각해봅니다.
+select cuisine_type,
+	   total_quantity,
+	   count_res_name,
+	   case when count_res_name >= 5 and total_quantity >= 30 then 0.005
+			when count_res_name >= 5 and total_quantity < 30 then 0.008
+			when count_res_name < 5 and total_quantity >= 30 then 0.01	
+			when count_res_name < 5 and total_quantity < 30 then 0.02
+			end '수수료'
+from
+(
+select cuisine_type,
+	   sum(quantity) total_quantity,
+	   count(distinct restaurant_name) count_res_name
+from food_orders
+group by 1
+) a
+
