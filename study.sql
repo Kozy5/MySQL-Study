@@ -573,3 +573,30 @@ select f.cuisine_type,
 	   f.rating
 from food_orders f left join payments p on f.order_id = p.order_id 
 where cuisine_type = 'Korean'
+(영상 속 답안)
+select f.order_id,  
+	   f.restaurant_name,
+	   f.price,
+	   p.pay_type,
+	   p.vat
+from food_orders f left join payments p on f.order_id = p.order_id 
+where cuisine_type = 'Korean'
+
+[실습 2] 고객의 주문 식당 조회하기
+( 조회 컬럼 : 고객 이름, 연령, 성별, 주문 식당)
+고객명으로 정렬,중복 없도록 조회
+(시청 전 구현해본 것)
+select c.name,
+	   c.age,
+	   c.gender,
+	   f.restaurant_name
+from customers c left join food_orders f on c.customer_id = f.customer_id
+group by c.name
+order by c.name
+(영상 속 답안)
+select distinct c.name,
+	   c.age,
+	   c.gender,
+	   f.restaurant_name
+from customers c left join food_orders f on c.customer_id = f.customer_id
+order by c.name
