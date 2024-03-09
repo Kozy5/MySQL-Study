@@ -553,3 +553,23 @@ group by 1
 (영상 속 답안)
 = 동일 !!
 
+
+
+
+Join
+A left join B = A table 정보는 다 가져오고 B table 정보는 교집합 부분만 가져온다 
+(B가 해당 없는 부분은 Null로 출력)  
+A inner join B = A table과 B table 교집합만 출력
+실행 방식 = A ~ join B on A.cullom = B.cullom 
+
+4-6 Join문 연습
+[실습 1] 한국 음식의 주문별 결제 수단과 수수료율을 조회하기
+(시청 전 구현해본 것)
+select f.cuisine_type,
+	   f.order_id,
+	   f.restaurant_name,
+	   f.price,
+	   p.pay_type,
+	   f.rating
+from food_orders f left join payments p on f.order_id = p.order_id 
+where cuisine_type = 'Korean'
