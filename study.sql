@@ -601,6 +601,7 @@ select distinct c.name,
 from customers c left join food_orders f on c.customer_id = f.customer_id
 order by c.name
 
+
 4-7 join 연산
 [실습1] 주문 가격과 수수료율을 곱하여 주문별 수수료 구하기
 (조회 컬럼 : 주문 번호, 식당 이름, 주문 가격, 수수료율, 수수료)
@@ -630,3 +631,54 @@ SELECT f.cuisine_type f_cui_type,
 	   c.age c_age
 from food_orders f left join customers c on f.customer_id = c.customer_id 
 ) a
+(실제 답안)
+SELECT cuisine_type '음식 타입',
+	   sum(price) '원래 가격',
+	   sum(price)-sum(discount) '할인 적용 가격',
+	   sum(discount) '할인 가격'
+FROM 
+(
+SELECT f.cuisine_type,
+	   price,
+	   price*((c.age-50)*0.005) discount
+from food_orders f inner join customers c on f.customer_id = c.customer_id
+where c.age >= 50
+) a
+group by 1
+order by 4 DESC 
+
+(영상 속 답안) // 틀렸죠. . . 제가 맞았죠
+SELECT cuisine_type,
+	   sum(price) price,
+	   sum(price*discount_rate) discounted_price
+FROM 
+(
+SELECT f.cuisine_type,
+	   f.price,
+	   (c.age-50)*0.005 discount_rate
+from food_orders f inner join customers c on f.customer_id = c.customer_id
+where c.age >= 50
+) a
+group by 1
+order by 3 DESC 
+
+4주차 숙제
+답안! 정답!
+SELECT restaurant_name,
+	   case when avg_price <= 5000 then 'price_group1'
+			when avg_price <= 10000 then 'price_group2'
+			when avg_price <= 30000 then 'price_group3'
+			when avg_price > 30000 then 'price_group4' end 'price_group',
+	   case when avg_age < 30 then 'age_group1'
+	   		when avg_age between 30 and 39 then 'age_group2'
+	   		when avg_age between 40 and 49 then 'age_group3'
+	   		when avg_age >= 50 then 'age_group4' end 'age_group'
+FROM 
+(
+SELECT f.restaurant_name,
+	   avg(f.price)avg_price,
+	   avg(c.age) avg_age
+from food_orders f inner join customers c on f.customer_id = c.customer_id 
+group by 1
+) a
+order by 1
