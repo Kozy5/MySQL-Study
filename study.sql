@@ -690,6 +690,8 @@ select restaurant_name,
 from food_orders
 group by 1
 
+
+
 5-2 값의제외
 
 order by 1
@@ -714,3 +716,18 @@ select a.order_id,
        b.gender
 from food_orders a left join customers b on a.customer_id=b.customer_id
 where b.age is null
+
+
+
+
+5-3
+상식적이지 않은 값에 대해 대응
+SELECT customer_id,
+	   name,
+	   email,
+	   gender,
+	   age,
+	   case when age < 15 then 15 
+	   		when age > 80 then 80
+	   		else age end age
+FROM customers c 
