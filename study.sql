@@ -691,6 +691,7 @@ from food_orders
 group by 1
 
 5-2 값의제외
+
 order by 1
 select a.order_id,
        a.customer_id,
@@ -700,4 +701,16 @@ select a.order_id,
        b.age,
        b.gender
 from food_orders a left join customers b on a.customer_id=b.customer_id
-where b.customer_id is not null 
+where b.customer_id is not null  // inner join과 유사한 효과
+
+값의 변경
+select a.order_id,
+       a.customer_id,
+       a.restaurant_name,
+       a.price,
+       b.name,
+       b.age,
+       coalesce(b.age, 20) "null 제거", // coalesce(column,b) coulumn에 null값이 있으면 b로 반환해줘
+       b.gender
+from food_orders a left join customers b on a.customer_id=b.customer_id
+where b.age is null
