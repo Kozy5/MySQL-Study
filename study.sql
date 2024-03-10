@@ -731,3 +731,21 @@ SELECT customer_id,
 	   		when age > 80 then 80
 	   		else age end age
 FROM customers c 
+
+5-4 SQL로 Pivot table 만들어보기 
+[실습] 음식점별 시간별 주문건수 Pivot Table 뷰 만들기 
+(15~20사이, 20시 주문건수 기준 내림차순)
+(시청 전 구현해본것)
+select f.restaurant_name,
+	   substr(p.time,1,2),
+	   count(p.time)
+from food_orders f inner join payments p  on f.order_id = p.order_id 
+where substr(p.time,1,2) between 15 and 20 
+group by 1,2
+(답안)
+select a.restaurant_name,
+       substring(b.time, 1, 2) hh,
+       count(1) cnt_order
+from food_orders a inner join payments b on a.order_id=b.order_id
+where substring(b.time, 1, 2) between 15 and 20
+group by 1, 2
