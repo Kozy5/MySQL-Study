@@ -681,4 +681,23 @@ SELECT f.restaurant_name,
 from food_orders f inner join customers c on f.customer_id = c.customer_id 
 group by 1
 ) a
+
+조회한 데이터가 잘못된값(상식적이지 않은 값을 가질때)
+
+select restaurant_name,
+	   avg(rating),
+	   avg(if(rating<>'Not given',rating,null))
+from food_orders
+group by 1
+
+5-2 값의제외
 order by 1
+select a.order_id,
+       a.customer_id,
+       a.restaurant_name,
+       a.price,
+       b.name,
+       b.age,
+       b.gender
+from food_orders a left join customers b on a.customer_id=b.customer_id
+where b.customer_id is not null 
