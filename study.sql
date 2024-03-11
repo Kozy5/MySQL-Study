@@ -871,4 +871,39 @@ group by 1,2
 )a
 
 
+(진짜 말대로 음식타입에서 비율 구하고 비율 순위까지 구하기)
+SELECT cuisine_type,
+	   restaurant_name,
+	   cnt_order,
+	   percent,
+	   rank() over(order by percent desc)
+FROM 
+(
+SELECT cuisine_type,
+	   restaurant_name,
+	   cnt_order,
+	   cnt_order/sum_cuisine_type_group percent,
+	   sum(cnt_order) over(partition by cuisine_type order by cnt_order) '누적합'
+FROM
+(
+SELECT cuisine_type,
+	   restaurant_name,
+	   cnt_order,
+	   sum(cnt_order) over(partition by cuisine_type) sum_cuisine_type_group
+FROM 
+(
+SELECT cuisine_type,
+	   restaurant_name,
+	   count(1) cnt_order
+FROM food_orders fo 
+group by 1,2
+) a
+) b
+) c
+
+
+
+
+
+
 
