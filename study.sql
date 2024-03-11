@@ -735,6 +735,7 @@ FROM customers c
 5-4 SQL로 Pivot table 만들어보기 
 [실습] 음식점별 시간별 주문건수 Pivot Table 뷰 만들기 
 (15~20사이, 20시 주문건수 기준 내림차순)
+기준이 될 서브쿼리 작성
 (시청 전 구현해본것)
 select f.restaurant_name,
 	   substr(p.time,1,2),
@@ -749,3 +750,83 @@ select a.restaurant_name,
 from food_orders a inner join payments b on a.order_id=b.order_id
 where substring(b.time, 1, 2) between 15 and 20
 group by 1, 2
+
+pivot view 
+SELECT restaurant_name,
+	   max(if(hh = '15', cnt_order,0)) '15',
+	   max(if(hh = '16', cnt_order,0)) '16',
+	   max(if(hh = '17', cnt_order,0)) '17',
+	   max(if(hh = '18', cnt_order,0)) '18',
+	   max(if(hh = '19', cnt_order,0)) '19',
+	   max(if(hh = '20', cnt_order,0)) '20'
+FROM 
+(
+select f.restaurant_name,
+	   substr(p.time,1,2) hh,
+	   count(1) cnt_order
+from food_orders f inner join payments p on f.order_id = p.order_id
+where substr(p.time,1,2) between 15 and 20
+group by 1,2
+) a
+group by 1
+order by 7 desc
+(영상 속 답안)
+select restaurant_name,
+       max(if(hh='15', cnt_order, 0)) "15",
+       max(if(hh='16', cnt_order, 0)) "16",
+       max(if(hh='17', cnt_order, 0)) "17",
+       max(if(hh='18', cnt_order, 0)) "18",
+       max(if(hh='19', cnt_order, 0)) "19",
+       max(if(hh='20', cnt_order, 0)) "20"
+from 
+(
+select a.restaurant_name,
+       substring(b.time, 1, 2) hh,
+       count(1) cnt_order
+from food_orders a inner join payments b on a.order_id=b.order_id
+where substring(b.time, 1, 2) between 15 and 20
+group by 1, 2
+) a
+group by 1
+order by 7 desc
+
+[실습 2] 성별, 연령별 주문건수 Pivot Table 뷰 만들기
+(나이는 10~59세 사이, 연령 순으로 내림차순)
+(시청 전 구현해본 것)
+select age_segment,
+	   max(if(gender = 'male',cnt_gender,0)) 'male',
+	   max(if(gender = 'female',cnt_gender,0)) 'female'
+from
+(
+select c.gender,
+       case when c.age between 10 and 19 then '10'
+       		when c.age between 20 and 29 then '20'
+       		when c.age between 30 and 39 then '30'
+       		when c.age between 40 and 49 then '40'
+       		when c.age between 50 and 59 then '50' end age_segment,
+       count(c.age) cnt_gender
+from customers c inner join food_orders f on c.customer_id = f.customer_id 
+where c.age between 10 and 59
+group by 1,2
+) a
+group by 1
+order by 1 desc
+(영상속 답안)
+select age,
+       max(if(gender='male', order_count, 0)) male,
+       max(if(gender='female', order_count, 0)) female
+from 
+(
+select b.gender,
+       case when age between 10 and 19 then 10
+            when age between 20 and 29 then 20
+            when age between 30 and 39 then 30
+            when age between 40 and 49 then 40
+            when age between 50 and 59 then 50 end age,
+       count(1) order_count
+from food_orders a inner join customers b on a.customer_id=b.customer_id
+where b.age between 10 and 59
+group by 1, 2
+) t
+group by 1
+order by age
