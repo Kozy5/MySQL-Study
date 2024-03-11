@@ -854,3 +854,21 @@ group by 1,2
 ) b
 where rank_order <= 3
 
+[실습 2]각 음식점의 주문건이 해당 음식 타입에서 차지하는 비율을 구하고, 
+주문건이 낮은 순으로 정렬했을 때 누적 합 구하기
+SELECT cuisine_type,
+	   restaurant_name,
+	   cnt_order,
+	   sum(cnt_order) over (partition by cuisine_type),
+	   sum(cnt_order) over (partition by cuisine_type order by cnt_order)
+from
+(
+select cuisine_type,
+	   restaurant_name,
+	   count(1) cnt_order
+from food_orders
+group by 1,2
+)a
+
+
+
