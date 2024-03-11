@@ -793,7 +793,7 @@ order by 7 desc
 [실습 2] 성별, 연령별 주문건수 Pivot Table 뷰 만들기
 (나이는 10~59세 사이, 연령 순으로 내림차순)
 (시청 전 구현해본 것)
-select age_segment,
+select age,
 	   max(if(gender = 'male',cnt_gender,0)) 'male',
 	   max(if(gender = 'female',cnt_gender,0)) 'female'
 from
@@ -803,7 +803,7 @@ select c.gender,
        		when c.age between 20 and 29 then '20'
        		when c.age between 30 and 39 then '30'
        		when c.age between 40 and 49 then '40'
-       		when c.age between 50 and 59 then '50' end age_segment,
+       		when c.age between 50 and 59 then '50' end age_segment age,
        count(c.age) cnt_gender
 from customers c inner join food_orders f on c.customer_id = f.customer_id 
 where c.age between 10 and 59
@@ -830,3 +830,27 @@ group by 1, 2
 ) t
 group by 1
 order by age
+
+5-5 업무 시작을 단축시켜 주는 마법의 문법 (Window Function - RANK, SUM)
+[실습1] 음식 타입별로 주문 건수가 가장 많은 상점 3개씩 조회하기
+SELECT cuisine_type,
+	   restaurant_name,
+	   cnt_order,
+	   rank_order
+FROM 
+(
+select cuisine_type,
+	   restaurant_name,
+	   cnt_order,
+	   rank() over (partition by cuisine_type order by cnt_order desc) rank_order
+from
+(
+select cuisine_type,
+	   restaurant_name,
+	   count(1) cnt_order
+from food_orders fo
+group by 1,2
+) a
+) b
+where rank_order <= 3
+
