@@ -949,3 +949,22 @@ where date_format(date(date),'%m') = 3
 group by 1,2
 order by 1
 
+[숙제] 음식 타입별, 연령별 주문건수 pivot view 만들기
+(제출)
+SELECT cuisine_type,
+	   max(if(age between 10 and 19,cnt_order,0)) '10대',
+	   max(if(age between 20 and 29, cnt_order,0))'20대',
+	   max(if(age between 30 and 39, cnt_order,0)) '30대',
+	   max(if(age between 40 and 49, cnt_order,0)) '40대',
+	   max(if(age between 50 and 59, cnt_order,0)) '50대'
+FROM 
+(
+SELECT f.cuisine_type,
+	   c.age,
+	   count(1) cnt_order
+FROM food_orders f inner join customers c on f.customer_id = c.customer_id
+group by 1,2
+) a
+group by 1
+
+
