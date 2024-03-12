@@ -901,9 +901,51 @@ group by 1,2
 ) b
 ) c
 
+5-6 날짜 포맷(날짜 데이터 처리)
+date_format(A,B) -> A에 어떤 컬럼을 date타입으로 넣을것인지 B는 어떤 형태로 리턴값을 받을껀지
+->A = input, B = output(return)
+date(column) -> 특정 컬럼을 데이트 타입으로 바꿈
+-> date_format(date(column), "%?")
+
+date_format(date(column), '%y') '년', = 2024
+date_format(date(column), '%m') '월', = 03
+date_format(date(column), '%d') '일', = 12
+date_format(date(column), '%w') '요일' = 0~6 (일~월)
+소문자
+%y = 2024
+%m = 03
+%d = 12
+%w = 0~6(일~월)
+대문자
+%Y = 24(두자릿 수 년도만)
+%M = march (각 월의 영문명)
+%D = 21st,22th (An ordinal number 즉 서수로 표기)
+%W = Sunday~Monday (요일의 영문명으로 표기)
 
 
-
-
-
+실습[2]
+3월 조건으로 지정하고, 년도별로 정렬하기
+(시청 전 구현해본 것) 틀렸음
+SELECT year,
+	   month,
+	   cnt_order
+FROM 
+(
+SELECT date_format(date(date),'%Y') year,
+	   date_format(date(date),'%m') month,
+	   count(1) cnt_order
+FROM food_orders f inner join payments p on f.order_id = p.order_id
+group by 1,2
+) a
+where month <= 3
+order by 1,2
+(영상 속 답안)
+SELECT date_format(date(date),'%Y')'년',
+	   date_format(date(date),'%m') '월',
+	   date_format(date(date),'%Y %m')'년월',
+	   count(1) cnt_order
+FROM food_orders f inner join payments p on f.order_id = p.order_id
+where date_format(date(date),'%m') = 3
+group by 1,2
+order by 1
 
