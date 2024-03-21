@@ -980,3 +980,30 @@ ex ROUND(1234.56789 ,-1) =1230
 ex TRUNCATE(1234.56789 ,1) = 1234.5
 ex TRUNCATE(1234.56789 ,-1) = 1230
 
+
+select food_type, // 문제에서 원하는 컬럼 메인쿼리에서 다시 작성
+       rest_id,
+       rest_name,
+       favorites
+from
+(
+select food_type, // 문제에서 원하는 컬럼 정리
+       rest_id,
+       rest_name,
+       favorites,
+       rank() over(partition by food_type order by favorites desc) ranking // 전체 순위 구하기
+from rest_info
+) a // 서브쿼리 화
+where ranking = 1 // 서브쿼리에서 ranking값 얻어와서 = 1등만 구하기
+order by food_type desc // 음식 종류별로 내림차순 정렬
+
+
+SELECT U.USER_ID,
+    U.NICKNAME,
+    CONCAT(U.CITY, ' ', U.STREET_ADDRESS1, ' ', U.STREET_ADDRESS2) AS 전체주소,
+    CONCAT(SUBSTRING(U.TLNO, 1, 3), '-', SUBSTRING(U.TLNO, 4, 4), '-', SUBSTRING(U.TLNO, 8)) AS 전화번호
+FROM USED_GOODS_USER U
+INNER JOIN USED_GOODS_BOARD B ON U.USER_ID = B.WRITER_ID
+GROUP BY 1
+HAVING COUNT(B.WRITER_ID) >= 3
+ORDER BY 1 DESC
